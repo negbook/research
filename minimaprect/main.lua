@@ -11,9 +11,9 @@ function GetMinimapAnchor()
     local yscale = 1.0 / res_y
     local Minimap = {}
     Minimap.width = xscale * (res_x / (4 * aspect_ratio))
-    Minimap.height = yscale * (res_y / 5.674)
+    Minimap.height = yscale * (res_y / 6.2)
     SetScriptGfxAlign(string.byte('L'), string.byte('B')) --https://forum.cfx.re/t/useful-snippet-getting-the-top-left-of-the-minimap-in-screen-coordinates/712843
-    Minimap.left_x, Minimap.top_y = GetScriptGfxPosition(-0.0045+0.005, (0.002 + (-0.188888)+0.005))
+    Minimap.left_x, Minimap.top_y = GetScriptGfxPosition(-0.0045+0.004, (0.002 + (-0.188888)+0.008))
     ResetScriptGfxAlign()
     --Minimap.left_x = xscale * (res_x * (safezone_x * ((math.abs(safezone - 1.0)) * 10)))
     Minimap.bottom_y = 1.0 - yscale * (res_y * (safezone_y * ((math.abs(safezone - 1.0)) * 10)))
@@ -29,10 +29,11 @@ function drawRct(x, y, width, height, r, g, b, a)
     DrawRect(x + width/2, y + height/2, width, height, r, g, b, a)
 end
 Citizen.CreateThread(function()
+    
     while true do
         Wait(0)
         local ui = GetMinimapAnchor()
-        local thickness = 4 -- Defines how many pixels wide the border is
+        local thickness = 1 -- Defines how many pixels wide the border is
         drawRct(ui.x, ui.y, ui.width, thickness * ui.yunit, 0, 0, 0, 255)
         drawRct(ui.x, ui.y + ui.height, ui.width, -thickness * ui.yunit, 0, 0, 0, 255)
         drawRct(ui.x, ui.y, thickness * ui.xunit, ui.height, 0, 0, 0, 255)
@@ -40,3 +41,21 @@ Citizen.CreateThread(function()
     end
 end)
 
+
+CreateThread(function()
+
+    local minimap = RequestScaleformMovie("minimap")
+    Wait(32)
+    SetRadarBigmapEnabled(true, false)
+    Wait(32)
+    SetRadarBigmapEnabled(false, false)
+    Wait(32)
+
+        while true do
+            Wait(0)
+            BeginScaleformMovieMethod(minimap, "SETUP_HEALTH_ARMOUR")
+            ScaleformMovieMethodAddParamInt(3)
+            EndScaleformMovieMethod()
+        end
+
+end)
